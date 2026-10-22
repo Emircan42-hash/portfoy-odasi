@@ -9,8 +9,8 @@ const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
 });
 
-// Photo Sphere Viewer'ın herkese açık örnek panoraması; gerçek çekimler gelince değişir.
-const SAMPLE_PANORAMA = "https://photo-sphere-viewer-data.netlify.app/assets/sphere.jpg";
+// Demo görseller public/demo altında (internet gerektirmez); gerçek çekimler gelince S3 URL'leri gelir.
+const DEMO = "/demo";
 
 async function main() {
   const passwordHash = await hash("demo1234", 10);
@@ -65,9 +65,9 @@ async function main() {
       description: "Site içinde, kapalı otopark, 24 saat güvenlik. Salon ve yatak odası denize bakar.",
       photos: {
         create: [
-          { url: "https://picsum.photos/seed/salon1/1200/800", caption: "Salon", order: 0 },
-          { url: "https://picsum.photos/seed/mutfak1/1200/800", caption: "Mutfak", order: 1 },
-          { url: "https://picsum.photos/seed/yatak1/1200/800", caption: "Yatak odası", order: 2 },
+          { url: `${DEMO}/salon-1.jpg`, caption: "Salon", order: 0 },
+          { url: `${DEMO}/mutfak-1.jpg`, caption: "Mutfak", order: 1 },
+          { url: `${DEMO}/yatak-1.jpg`, caption: "Yatak odası", order: 2 },
         ],
       },
     },
@@ -75,10 +75,10 @@ async function main() {
 
   // 360° tur: iki oda, birbirine kapıyla bağlı
   const salon = await prisma.tourScene.create({
-    data: { propertyId: seaView.id, name: "Salon", panoramaUrl: SAMPLE_PANORAMA, order: 0 },
+    data: { propertyId: seaView.id, name: "Salon", panoramaUrl: `${DEMO}/salon-360.jpg`, order: 0 },
   });
   const mutfak = await prisma.tourScene.create({
-    data: { propertyId: seaView.id, name: "Mutfak", panoramaUrl: SAMPLE_PANORAMA, order: 1 },
+    data: { propertyId: seaView.id, name: "Mutfak", panoramaUrl: `${DEMO}/mutfak-360.jpg`, order: 1 },
   });
   await prisma.tourScene.update({
     where: { id: salon.id },
@@ -107,8 +107,8 @@ async function main() {
       description: "Vapur iskelesine 5 dakika yürüme. Mutfak ve banyo 2024'te yenilendi.",
       photos: {
         create: [
-          { url: "https://picsum.photos/seed/salon2/1200/800", caption: "Salon", order: 0 },
-          { url: "https://picsum.photos/seed/banyo2/1200/800", caption: "Banyo", order: 1 },
+          { url: `${DEMO}/salon-2.jpg`, caption: "Salon", order: 0 },
+          { url: `${DEMO}/banyo-2.jpg`, caption: "Banyo", order: 1 },
         ],
       },
     },
@@ -129,7 +129,7 @@ async function main() {
       city: "İzmir",
       district: "Karşıyaka",
       neighborhood: "Alaybey",
-      photos: { create: [{ url: "https://picsum.photos/seed/salon3/1200/800", caption: "Salon", order: 0 }] },
+      photos: { create: [{ url: `${DEMO}/salon-3.jpg`, caption: "Salon", order: 0 }] },
     },
   });
 
