@@ -1,0 +1,202 @@
+// Portföy Odası veri modeli.
+// Dört taraf: ofis sahibi ve danışman (User), müşteri (Room üzerinden, hesapsız),
+// mülk sahibi (faz 2'de OwnerReport). Şema değişince: npm run db:migrate
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  OWNER // şirket sahibi: tüm danışmanları görür
+  AGENT // danışman: kendi portföyü ve odaları
+}
+
+enum ListingType {
+  RENT
+  SALE
+}
+
+enum ReactionKind {
+  LIKE
+  DISLIKE
+  NOTE
+}
+
+enum EventKind {
+  ROOM_OPEN     // müşteri linki açtı
+  PROPERTY_VIEW // bir dairenin sayfasını açtı (durationMs: ne kadar kaldı)
+  PHOTO_VIEW    // bir fotoğrafı büyüttü
+  TOUR_VIEW     // 360° turu açtı
+  SCENE_VIEW    // turda bir odada durdu (durationMs)
+}
+
+enum AppointmentStatus {
+  REQUESTED
+  CONFIRMED
+  DONE
+  CANCELLED
+}
+
+model Office {
+  id         String     @id @default(cuid())
+  name       String
+  createdAt  DateTime   @default(now())
+  users      User[]
+  properties Property[]
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  phone        String?
+  role         Role       @default(AGENT)
+  officeId     String
+  office       Office     @relation(fields: [officeId], references: [id])
+  properties   Property[]
+  rooms        Room[]
+  createdAt    DateTime   @default(now())
+}
+
+model Property {
+  id           String        @id @default(cuid())
+  officeId     String
+  office       Office        @relation(fields: [officeId], references: [id])
+  agentId      String
+  agent        User          @relation(fields: [agentId], references: [id])
+  title        String
+  listingType  ListingType
+  price        Int // TL; kiralıkta aylık kira, satılıkta satış fiyatı
+  dues         Int? // aidat, TL/ay
+  deposit      Int? // depozito, TL (kiralık)
+  roomsLabel   String // "3+1"
+  sqm          Int?
+  floor        Int?
+  buildingAge  Int?
+  city         String
+  district     String
+  neighborhood String?
+  address      String?
+  description  String?
+  photos       Photo[]
+  scenes       TourScene[]
+  roomItems    RoomItem[]
+  reactions    Reaction[]
+  events       RoomEvent[]
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([officeId])
+  @@index([agentId])
+}
+
+model Photo {
+  id         String     @id @default(cuid())
+  propertyId String
+  property   Property   @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  url        String
+  caption    String?
+  order      Int        @default(0)
+  reactions  Reaction[]
+
+  @@index([propertyId])
+}
+
+// 360° turun bir odası. links: [{ toSceneId, yaw, pitch }] = kapı noktaları.
+model TourScene {
+  id          String     @id @default(cuid())
+  propertyId  String
+  property    Property   @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  name        String // "Salon", "Mutfak"
+  panoramaUrl String // equirectangular 2:1 görsel
+  order       Int        @default(0)
+  links       Json?
+  reactions   Reaction[]
+
+  @@index([propertyId])
+}
+
+// Müşteriye gönderilen tek link. Hesap yok; token URL'nin kendisidir.
+model Room {
+  id            String        @id @default(cuid())
+  token         String        @unique
+  agentId       String
+  agent         User          @relation(fields: [agentId], references: [id])
+  customerName  String
+  customerPhone String?
+  note          String? // danışmanın müşteriye kısa notu, oda sayfasının başında görünür
+  items         RoomItem[]
+  events        RoomEvent[]
+  reactions     Reaction[]
+  appointments  Appointment[]
+  createdAt     DateTime      @default(now())
+  expiresAt     DateTime?
+
+  @@index([agentId])
+}
+
+model RoomItem {
+  id         String   @id @default(cuid())
+  roomId     String
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  order      Int      @default(0)
+  agentNote  String? // "Manzara tam istediğin gibi" tipi kişisel not
+
+  @@unique([roomId, propertyId])
+}
+
+model Reaction {
+  id         String       @id @default(cuid())
+  roomId     String
+  room       Room         @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  propertyId String
+  property   Property     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  photoId    String?
+  photo      Photo?       @relation(fields: [photoId], references: [id], onDelete: SetNull)
+  sceneId    String?
+  scene      TourScene?   @relation(fields: [sceneId], references: [id], onDelete: SetNull)
+  kind       ReactionKind
+  text       String?
+  createdAt  DateTime     @default(now())
+
+  @@index([roomId])
+  @@index([propertyId])
+}
+
+model RoomEvent {
+  id         String    @id @default(cuid())
+  roomId     String
+  room       Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  kind       EventKind
+  durationMs Int?
+  meta       Json?
+  createdAt  DateTime  @default(now())
+
+  @@index([roomId, createdAt])
+  @@index([propertyId])
+}
+
+model Appointment {
+  id           String            @id @default(cuid())
+  roomId       String
+  room         Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  propertyId   String
+  property     Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  startsAt     DateTime
+  status       AppointmentStatus @default(REQUESTED)
+  customerNote String?
+  createdAt    DateTime          @default(now())
+
+  @@index([roomId])
+}
