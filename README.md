@@ -68,5 +68,5 @@ Her odanın ortasında, göz hizasında, 2:1 oranlı equirectangular bir kare (I
 
 1. Fotoğraf ve panorama dosya yükleme (S3 uyumlu depo)
 2. Panelde kapı noktası yerleştirme (turda tıkla → link)
-3. Mülk sahibi haftalık rapor linki (faz 2)
+3. Müşteri teklifi: müşteri odadan teklif verir, danışman onaylayıp mülk sahibine iletir (faz 2). Mülk sahibi ayrı bir profil değildir; istenirse müşteriyle aynı oda linkini alır, görüntüleme ve talep sayısı ona gösterilmez
 4. Uzaktan yer gösterme: danışman ve müşteri aynı turda (faz 2)

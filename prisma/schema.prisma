@@ -1,6 +1,7 @@
 // Portföy Odası veri modeli.
-// Dört taraf: ofis sahibi ve danışman (User), müşteri (Room üzerinden, hesapsız),
-// mülk sahibi (faz 2'de OwnerReport). Şema değişince: npm run db:migrate
+// Üç profil: şirket sahibi ve danışman (User), müşteri (Room üzerinden, hesapsız).
+// Mülk sahibi ayrı profil değildir; istenirse müşteri gibi oda linki alır, istatistik görmez.
+// Şema değişince: npm run db:migrate
 
 generator client {
   provider = "prisma-client"
