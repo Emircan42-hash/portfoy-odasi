@@ -103,11 +103,12 @@
 @utility font-display {
   font-family: var(--font-display);
   font-variation-settings: "opsz" 36, "SOFT" 30;
+  font-variant-numeric: lining-nums;
   letter-spacing: -0.01em;
 }
 
 @utility tabular {
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 @utility shadow-card {
