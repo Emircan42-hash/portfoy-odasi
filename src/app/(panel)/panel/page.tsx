@@ -10,11 +10,12 @@ export default async function DashboardPage() {
   const user = await requireUser();
   const since = daysAgo(7);
 
-  const [properties, rooms, opensThisWeek, appointments, recentEvents] = await Promise.all([
+  const [properties, rooms, opensThisWeek, appointments, pendingOffers, recentEvents] = await Promise.all([
     prisma.property.count({ where: propertyScope(user) }),
     prisma.room.count({ where: roomScope(user) }),
     prisma.roomEvent.count({ where: { kind: "ROOM_OPEN", createdAt: { gte: since }, room: roomScope(user) } }),
     prisma.appointment.count({ where: { status: "REQUESTED", room: roomScope(user) } }),
+    prisma.offer.count({ where: { status: "PENDING", room: roomScope(user) } }),
     prisma.roomEvent.findMany({
       where: { room: roomScope(user), kind: { in: ["ROOM_OPEN", "PROPERTY_VIEW", "TOUR_VIEW"] } },
       include: { room: { select: { id: true, customerName: true } }, property: { select: { title: true } } },
@@ -27,6 +28,7 @@ export default async function DashboardPage() {
     { label: "Portföy", value: properties, href: "/portfoy" },
     { label: "Müşteri odası", value: rooms, href: "/odalar" },
     { label: "Bu hafta açılan link", value: opensThisWeek, href: "/odalar" },
+    { label: "Bekleyen teklif", value: pendingOffers, href: "/teklifler" },
     { label: "Bekleyen randevu", value: appointments, href: "/randevular" },
   ];
 
@@ -40,7 +42,7 @@ export default async function DashboardPage() {
           <Link href="/odalar/yeni">Yeni oda linki</Link>
         </Button>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {stats.map((s) => (
           <Link key={s.label} href={s.href}>
             <Card>

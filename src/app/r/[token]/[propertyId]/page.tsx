@@ -9,6 +9,7 @@ import { formatTL } from "@/lib/utils";
 import { Tracker } from "@/components/room/tracker";
 import { ReactionBar } from "@/components/room/reaction-bar";
 import { AppointmentForm } from "@/components/room/appointment-form";
+import { OfferForm } from "@/components/room/offer-form";
 import { CostCard } from "@/components/room/cost-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,11 +34,15 @@ export default async function PropertyPage({ params }: Props) {
   if (!room || !item) notFound();
   const p = item.property;
 
-  const reactions = await prisma.reaction.findMany({
-    where: { roomId: room.id, propertyId: p.id },
-    orderBy: { createdAt: "asc" },
-    select: { id: true, kind: true, text: true, photoId: true },
-  });
+  const [reactions, offerCount] = await Promise.all([
+    prisma.reaction.findMany({
+      where: { roomId: room.id, propertyId: p.id },
+      orderBy: { createdAt: "asc" },
+      select: { id: true, kind: true, text: true, photoId: true },
+    }),
+    // Müşteriye yalnız "teklif verildi mi" bilgisi gider, tutar asla gitmez
+    prisma.offer.count({ where: { roomId: room.id, propertyId: p.id } }),
+  ]);
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-4 pb-16">
@@ -97,6 +102,8 @@ export default async function PropertyPage({ params }: Props) {
       {p.description && <p className="text-base leading-relaxed">{p.description}</p>}
 
       <CostCard property={p} />
+
+      <OfferForm token={token} propertyId={p.id} listingType={p.listingType} alreadyOffered={offerCount > 0} />
 
       <AppointmentForm token={token} propertyId={p.id} />
     </main>

@@ -10,6 +10,8 @@ Emlak danışmanının müşteriye WhatsApp'tan attığı tek link. Müşteri li
 | --- | --- | --- |
 | Müşteri | `/r/[token]` oda, `/r/[token]/[daire]` daire sayfası, `/r/[token]/[daire]/tur` 360° tur | Çalışır |
 | Müşteri | Beğen / ele / not, gerçek maliyet kartı, randevu isteği | Çalışır |
+| Müşteri | Teklif verme (tutar + not); müşteri yalnız "iletildi" görür, tutarlar sadece panelde | Çalışır |
+| Danışman | `/teklifler`: teklifleri ilan fiyatına göre yüzdesiyle görür, kabul / ret / iç not | Çalışır |
 | Danışman | `/panel` özet, `/portfoy` daireler, `/odalar` müşteri odaları, `/randevular` | Çalışır |
 | Danışman | Oda linki üretme, WhatsApp'tan gönderme, ilgi takibi (görüntüleme, süre, tur) | Çalışır |
 | Şirket sahibi | Aynı panel, ofisin tüm danışmanlarını görür | Çalışır |
@@ -68,5 +70,5 @@ Her odanın ortasında, göz hizasında, 2:1 oranlı equirectangular bir kare (I
 
 1. Fotoğraf ve panorama dosya yükleme (S3 uyumlu depo)
 2. Panelde kapı noktası yerleştirme (turda tıkla → link)
-3. Müşteri teklifi: müşteri odadan teklif verir, danışman onaylayıp mülk sahibine iletir (faz 2). Mülk sahibi ayrı bir profil değildir; istenirse müşteriyle aynı oda linkini alır, görüntüleme ve talep sayısı ona gösterilmez
+3. Teklif bildirimi danışmana (SMS / WhatsApp). Mülk sahibi ayrı bir profil değildir; istenirse müşteriyle aynı oda linkini alır, görüntüleme, talep ve teklif bilgisi ona gösterilmez
 4. Uzaktan yer gösterme: danışman ve müşteri aynı turda (faz 2)

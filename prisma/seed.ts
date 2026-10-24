@@ -133,7 +133,7 @@ async function main() {
     },
   });
 
-  await prisma.room.create({
+  const room = await prisma.room.create({
     data: {
       token: "demo-oda",
       agentId: agent.id,
@@ -148,6 +148,11 @@ async function main() {
         ],
       },
     },
+  });
+
+  // Müşterinin odadan verdiği örnek teklif; yalnız panelde görünür
+  await prisma.offer.create({
+    data: { roomId: room.id, propertyId: bostanli.id, amount: 35000, note: "1 Kasım'da taşınabiliriz, 1 yıllık sözleşme" },
   });
 
   console.log("Demo verisi hazır.");

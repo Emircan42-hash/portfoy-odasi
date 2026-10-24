@@ -12,7 +12,7 @@ export default async function RoomsPage() {
     where: roomScope(user),
     include: {
       agent: { select: { name: true } },
-      _count: { select: { items: true, reactions: true, appointments: true } },
+      _count: { select: { items: true, reactions: true, appointments: true, offers: true } },
       events: { where: { kind: "ROOM_OPEN" }, orderBy: { createdAt: "desc" }, take: 1 },
     },
     orderBy: { createdAt: "desc" },
@@ -37,6 +37,7 @@ export default async function RoomsPage() {
                 {user.role === "OWNER" && <th className="p-3 font-medium">Danışman</th>}
                 <th className="p-3 font-medium">Daire</th>
                 <th className="p-3 font-medium">Tepki</th>
+                <th className="p-3 font-medium">Teklif</th>
                 <th className="p-3 font-medium">Randevu</th>
                 <th className="p-3 font-medium">Son açılış</th>
                 <th className="p-3 font-medium">Oluşturuldu</th>
@@ -53,6 +54,7 @@ export default async function RoomsPage() {
                   {user.role === "OWNER" && <td className="p-3 text-muted-foreground">{r.agent.name}</td>}
                   <td className="p-3">{r._count.items}</td>
                   <td className="p-3">{r._count.reactions}</td>
+                  <td className="p-3">{r._count.offers}</td>
                   <td className="p-3">{r._count.appointments}</td>
                   <td className="p-3">
                     {r.events[0] ? (

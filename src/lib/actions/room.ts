@@ -48,6 +48,20 @@ export async function createRoom(_prev: RoomFormState, formData: FormData): Prom
   redirect(`/odalar/${room.id}`);
 }
 
+export async function updateOfferStatus(formData: FormData) {
+  const user = await requireUser();
+  const id = String(formData.get("id"));
+  const status = z.enum(["PENDING", "ACCEPTED", "REJECTED"]).parse(formData.get("status"));
+  const agentNote = String(formData.get("agentNote") ?? "").trim();
+  await prisma.offer.updateMany({
+    where: { id, room: roomScope(user) },
+    data: { status, ...(agentNote ? { agentNote } : {}) },
+  });
+  revalidatePath("/teklifler");
+  revalidatePath("/odalar");
+  revalidatePath("/panel");
+}
+
 export async function updateAppointmentStatus(formData: FormData) {
   const user = await requireUser();
   const id = String(formData.get("id"));

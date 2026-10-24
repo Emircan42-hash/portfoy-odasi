@@ -43,6 +43,12 @@ enum AppointmentStatus {
   CANCELLED
 }
 
+enum OfferStatus {
+  PENDING  // müşteri verdi, danışman henüz bakmadı
+  ACCEPTED // mülk sahibi kabul etti
+  REJECTED // mülk sahibi ya da danışman reddetti
+}
+
 model Office {
   id         String     @id @default(cuid())
   name       String
@@ -91,6 +97,7 @@ model Property {
   reactions    Reaction[]
   events       RoomEvent[]
   appointments Appointment[]
+  offers       Offer[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
@@ -137,6 +144,7 @@ model Room {
   events        RoomEvent[]
   reactions     Reaction[]
   appointments  Appointment[]
+  offers        Offer[]
   createdAt     DateTime      @default(now())
   expiresAt     DateTime?
 
@@ -200,4 +208,24 @@ model Appointment {
   createdAt    DateTime          @default(now())
 
   @@index([roomId])
+}
+
+// Müşterinin odadan verdiği teklif. Yalnız danışman ve şirket sahibi görür;
+// müşteri sadece "iletildi" bilgisini alır, mülk sahibine danışman iletir.
+model Offer {
+  id         String      @id @default(cuid())
+  roomId     String
+  room       Room        @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  propertyId String
+  property   Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  amount     Int // TL; kiralıkta aylık kira teklifi, satılıkta satış teklifi
+  note       String? // müşterinin notu: "1 Kasım'da taşınabilirim"
+  status     OfferStatus @default(PENDING)
+  agentNote  String? // danışmanın iç notu: "mülk sahibine iletildi, 40 diyor"
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([roomId])
+  @@index([propertyId])
+  @@index([status])
 }

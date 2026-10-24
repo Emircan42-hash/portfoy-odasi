@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, CalendarClock, DoorOpen, LayoutDashboard, LogOut } from "lucide-react";
+import { Building2, CalendarClock, DoorOpen, HandCoins, LayoutDashboard, LogOut } from "lucide-react";
 import { requireUser } from "@/auth";
 import { logout } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ const nav = [
   { href: "/panel", label: "Özet", icon: LayoutDashboard },
   { href: "/portfoy", label: "Portföy", icon: Building2 },
   { href: "/odalar", label: "Müşteri odaları", icon: DoorOpen },
+  { href: "/teklifler", label: "Teklifler", icon: HandCoins },
   { href: "/randevular", label: "Randevular", icon: CalendarClock },
 ];
 

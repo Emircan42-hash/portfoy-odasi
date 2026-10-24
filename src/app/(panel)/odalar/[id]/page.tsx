@@ -11,6 +11,7 @@ import { CopyButton } from "@/components/copy-button";
 
 const reactionLabel = { LIKE: "Beğendi", DISLIKE: "Elemek istedi", NOTE: "Not" } as const;
 const statusLabel = { REQUESTED: "Talep", CONFIRMED: "Onaylı", DONE: "Yapıldı", CANCELLED: "İptal" } as const;
+const offerLabel = { PENDING: "Bekliyor", ACCEPTED: "Kabul", REJECTED: "Ret" } as const;
 
 export default async function RoomDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -33,6 +34,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
       },
       events: { orderBy: { createdAt: "desc" } },
       reactions: { orderBy: { createdAt: "desc" }, include: { photo: true, scene: true } },
+      offers: { orderBy: { createdAt: "desc" } },
       appointments: { orderBy: { startsAt: "asc" }, include: { property: { select: { title: true } } } },
     },
   });
@@ -86,6 +88,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
         {room.items.map(({ property: p, agentNote }) => {
           const s = statsByProperty.get(p.id);
           const reactions = room.reactions.filter((r) => r.propertyId === p.id);
+          const offers = room.offers.filter((o) => o.propertyId === p.id);
           return (
             <Card key={p.id}>
               <CardHeader>
@@ -120,6 +123,25 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
                         {r.scene?.name && <span className="text-muted-foreground">{r.scene.name} (360°)</span>}
                         {r.text && <span>&quot;{r.text}&quot;</span>}
                         <span className="ml-auto text-xs text-muted-foreground">{formatDateTime(r.createdAt)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {offers.length > 0 && (
+                  <ul className="flex flex-col gap-1 border-t pt-2">
+                    {offers.map((o) => (
+                      <li key={o.id} className="flex flex-wrap items-baseline gap-x-2">
+                        <Badge variant={o.status === "ACCEPTED" ? "success" : o.status === "REJECTED" ? "destructive" : "outline"}>
+                          Teklif · {offerLabel[o.status]}
+                        </Badge>
+                        <span className="font-medium">
+                          {formatTL(o.amount)}
+                          {p.listingType === "RENT" ? " / ay" : ""}
+                        </span>
+                        {o.note && <span className="text-muted-foreground">&quot;{o.note}&quot;</span>}
+                        <Link href="/teklifler" className="ml-auto text-xs text-muted-foreground hover:underline">
+                          {formatDateTime(o.createdAt)}
+                        </Link>
                       </li>
                     ))}
                   </ul>
