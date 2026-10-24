@@ -58,10 +58,10 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">{room.customerName}</h1>
+        <div className="flex flex-col gap-1">
+          <h1 className="font-display text-3xl font-semibold tracking-tight">{room.customerName}</h1>
           <p className="text-sm text-muted-foreground">
             {room.agent.name} · oluşturuldu {formatDateTime(room.createdAt)}
             {opens.length > 0 ? ` · ${opens.length} kez açıldı, son ${formatDateTime(opens[0].createdAt)}` : " · henüz açılmadı"}
@@ -69,7 +69,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
         </div>
         <div className="flex flex-wrap gap-2">
           <CopyButton text={link} />
-          <Button asChild variant="secondary">
+          <Button asChild variant="whatsapp">
             <a href={waHref} target="_blank" rel="noopener noreferrer">
               WhatsApp&apos;tan gönder
             </a>
@@ -82,7 +82,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
         </div>
       </div>
 
-      <code className="w-fit rounded-md bg-muted px-3 py-2 text-sm">{link}</code>
+      <code className="w-fit rounded-lg border bg-card px-3 py-2 text-sm shadow-xs">{link}</code>
 
       <section className="grid gap-4 lg:grid-cols-2">
         {room.items.map(({ property: p, agentNote }) => {
@@ -93,7 +93,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
             <Card key={p.id}>
               <CardHeader>
                 <div className="flex items-start justify-between gap-2">
-                  <CardTitle>{p.title}</CardTitle>
+                  <CardTitle className="font-display text-lg">{p.title}</CardTitle>
                   <Badge variant={p.listingType === "RENT" ? "secondary" : "default"}>
                     {p.listingType === "RENT" ? "Kiralık" : "Satılık"}
                   </Badge>
@@ -154,7 +154,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
 
       <Card>
         <CardHeader>
-          <CardTitle>Randevular</CardTitle>
+          <CardTitle className="font-display text-xl">Randevular</CardTitle>
         </CardHeader>
         <CardContent>
           {room.appointments.length === 0 ? (

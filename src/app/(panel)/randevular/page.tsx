@@ -6,6 +6,7 @@ import { updateAppointmentStatus } from "@/lib/actions/room";
 import { formatDateTime } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/panel/page-header";
 
 const statusLabel = { REQUESTED: "Talep", CONFIRMED: "Onaylı", DONE: "Yapıldı", CANCELLED: "İptal" } as const;
 
@@ -18,12 +19,12 @@ export default async function AppointmentsPage() {
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Randevular</h1>
+    <div className="flex flex-col gap-8">
+      <PageHeader title="Randevular" description="Müşterilerin odadan istediği gösterimler. Onaylayın, yapıldı işaretleyin." />
       {appointments.length === 0 ? (
         <p className="text-sm text-muted-foreground">Randevu yok.</p>
       ) : (
-        <ul className="divide-y rounded-lg border text-sm">
+        <ul className="divide-y rounded-2xl border bg-card text-sm shadow-card">
           {appointments.map((a) => (
             <li key={a.id} className="flex flex-wrap items-center gap-3 p-3">
               <span className="font-medium">{formatDateTime(a.startsAt)}</span>

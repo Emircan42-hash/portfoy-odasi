@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { getRoomByToken } from "@/lib/room-data";
 import { Tracker } from "@/components/room/tracker";
 import { VirtualTour, type TourSceneInput } from "@/components/tour/virtual-tour";
+import { BrandMark } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 
 type Props = { params: Promise<{ token: string; propertyId: string }> };
@@ -30,15 +31,21 @@ export default async function TourPage({ params }: Props) {
   }));
 
   return (
-    <main className="flex h-dvh flex-col bg-black text-white">
+    <main className="flex h-dvh flex-col bg-brand-dark text-brand-dark-foreground">
       <Tracker token={token} kind="TOUR_VIEW" propertyId={propertyId} />
-      <div className="flex items-center gap-3 p-3">
-        <Button asChild variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
+      <div className="flex items-center gap-3 px-3 py-2.5">
+        <Button asChild variant="ghost" size="sm" className="text-brand-dark-foreground hover:bg-white/10 hover:text-brand-dark-foreground">
           <Link href={`/r/${token}/${propertyId}`}>
             <ArrowLeft /> Daireye dön
           </Link>
         </Button>
-        <span className="truncate text-sm">{item.property.title}</span>
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-medium">{item.property.title}</div>
+          <div className="text-xs text-brand-dark-muted">
+            {scenes.length} oda · sürükleyin ya da telefonu çevirin, kapı oklarıyla odadan odaya geçin
+          </div>
+        </div>
+        <BrandMark className="text-brand-dark-soft" size={24} />
       </div>
       <div className="min-h-0 flex-1">
         <VirtualTour token={token} propertyId={propertyId} scenes={scenes} />

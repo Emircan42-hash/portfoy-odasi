@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { Wordmark } from "@/components/brand";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = { title: "Giriş" };
@@ -10,11 +11,21 @@ export default async function LoginPage() {
   if (session?.user) redirect("/panel");
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-neutral-950 p-4">
-      <div className="w-full max-w-sm rounded-xl border border-neutral-800 bg-neutral-900 p-6 text-neutral-50 shadow-lg">
-        <h1 className="text-xl font-semibold">Portföy Odası</h1>
-        <p className="mt-1 text-sm text-neutral-400">Danışman ve şirket sahibi girişi.</p>
-        <LoginForm />
+    <main className="relative flex flex-1 items-center justify-center overflow-hidden bg-brand-dark p-4 text-brand-dark-foreground">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[720px] -translate-x-1/2 rounded-full opacity-40 blur-3xl"
+        style={{ background: "radial-gradient(closest-side, var(--brand-glow), transparent)" }}
+      />
+      <div className="relative flex w-full max-w-sm flex-col gap-8">
+        <div className="flex flex-col gap-3">
+          <Wordmark inverted />
+          <p className="font-display text-3xl font-semibold leading-tight">Müşteriye tek link, size tüm hikâye.</p>
+          <p className="text-sm text-brand-dark-muted">Danışman ve şirket sahibi girişi.</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-float backdrop-blur">
+          <LoginForm />
+        </div>
       </div>
     </main>
   );

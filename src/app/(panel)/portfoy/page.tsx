@@ -7,6 +7,8 @@ import { formatTL } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/panel/page-header";
+import { SpecList } from "@/components/room/spec-list";
 
 export default async function PropertiesPage() {
   const user = await requireUser();
@@ -21,13 +23,12 @@ export default async function PropertiesPage() {
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Portföy</h1>
+    <div className="flex flex-col gap-8">
+      <PageHeader title="Portföy" description={`${properties.length} daire. Her daire bir odaya eklenip müşteriye gönderilebilir.`}>
         <Button asChild>
           <Link href="/portfoy/yeni">Daire ekle</Link>
         </Button>
-      </div>
+      </PageHeader>
       {properties.length === 0 ? (
         <p className="text-sm text-muted-foreground">Henüz daire yok.</p>
       ) : (
@@ -38,25 +39,19 @@ export default async function PropertiesPage() {
                 {p.photos[0] && (
                   <Image src={p.photos[0].url} alt={p.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
                 )}
-              </div>
-              <CardContent className="flex flex-col gap-2 pb-4">
-                <div className="flex items-start justify-between gap-2">
-                  <h2 className="font-medium leading-tight">{p.title}</h2>
-                  <Badge variant={p.listingType === "RENT" ? "secondary" : "default"}>
-                    {p.listingType === "RENT" ? "Kiralık" : "Satılık"}
-                  </Badge>
+                <div className="absolute left-3 top-3 flex gap-2">
+                  <Badge variant="glass">{p.listingType === "RENT" ? "Kiralık" : "Satılık"}</Badge>
+                  {p._count.scenes > 0 && <Badge variant="glass">360° · {p._count.scenes} oda</Badge>}
                 </div>
-                <div className="text-lg font-semibold">
+              </div>
+              <CardContent className="flex flex-col gap-2.5 py-4">
+                <h2 className="font-display text-lg font-semibold leading-tight">{p.title}</h2>
+                <div className="text-xl font-semibold tabular">
                   {formatTL(p.price)}
                   {p.listingType === "RENT" && <span className="text-sm font-normal text-muted-foreground"> / ay</span>}
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {p.roomsLabel} · {p.sqm ? `${p.sqm} m² · ` : ""}
-                  {p.district}
-                  {p.neighborhood ? `, ${p.neighborhood}` : ""}
-                </div>
-                <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                  {p._count.scenes > 0 && <Badge variant="outline">360° tur · {p._count.scenes} oda</Badge>}
+                <SpecList property={p} showLocation />
+                <div className="flex flex-wrap gap-x-2 pt-1 text-xs text-muted-foreground">
                   <span>{p._count.roomItems} odada paylaşıldı</span>
                   {user.role === "OWNER" && <span>· {p.agent.name}</span>}
                 </div>

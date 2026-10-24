@@ -7,6 +7,7 @@ import { formatDateTime, formatTL } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/components/panel/page-header";
 
 const statusLabel = { PENDING: "Bekliyor", ACCEPTED: "Kabul", REJECTED: "Ret" } as const;
 const statusVariant = { PENDING: "outline", ACCEPTED: "success", REJECTED: "destructive" } as const;
@@ -23,27 +24,25 @@ export default async function OffersPage() {
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Teklifler</h1>
-        <p className="text-sm text-muted-foreground">
-          Müşterilerin odadan verdiği teklifler. Yalnız siz ve şirket sahibi görür; mülk sahibine siz iletirsiniz.
-        </p>
-      </div>
+    <div className="flex flex-col gap-8">
+      <PageHeader
+        title="Teklifler"
+        description="Müşterilerin odadan verdiği teklifler. Yalnız siz ve şirket sahibi görür; mülk sahibine siz iletirsiniz."
+      />
       {offers.length === 0 ? (
         <p className="text-sm text-muted-foreground">Henüz teklif yok.</p>
       ) : (
-        <ul className="divide-y rounded-lg border text-sm">
+        <ul className="divide-y rounded-2xl border bg-card text-sm shadow-card">
           {offers.map((o) => {
             const diff = Math.round(((o.amount - o.property.price) / o.property.price) * 100);
             return (
-              <li key={o.id} className="flex flex-col gap-2 p-3">
+              <li key={o.id} className="flex flex-col gap-2 p-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-base font-semibold">
+                  <span className="text-lg font-semibold tabular">
                     {formatTL(o.amount)}
                     {o.property.listingType === "RENT" && <span className="text-sm font-normal text-muted-foreground"> / ay</span>}
                   </span>
-                  <span className={diff < 0 ? "text-destructive" : "text-emerald-700"}>
+                  <span className={`tabular ${diff < 0 ? "text-destructive" : "text-success"}`}>
                     ({diff > 0 ? "+" : ""}
                     {diff}% · ilan {formatTL(o.property.price)})
                   </span>

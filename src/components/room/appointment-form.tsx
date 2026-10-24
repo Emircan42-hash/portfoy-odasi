@@ -28,9 +28,9 @@ export function AppointmentForm({ token, propertyId }: { token: string; property
 
   if (state === "done") {
     return (
-      <Card>
+      <Card className="border-success/30 bg-success/5">
         <CardContent className="flex items-center gap-2 text-sm">
-          <CalendarCheck className="size-4 text-emerald-600" />
+          <CalendarCheck className="size-4 text-success" />
           Randevu talebiniz danışmanınıza iletildi; sizi arayıp onaylayacak.
         </CardContent>
       </Card>
@@ -40,7 +40,7 @@ export function AppointmentForm({ token, propertyId }: { token: string; property
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Gidip görmek ister misiniz?</CardTitle>
+        <CardTitle className="font-display text-xl">Gidip görmek ister misiniz?</CardTitle>
         <CardDescription>Size uygun bir gün ve saat seçin, danışmanınız onaylasın.</CardDescription>
       </CardHeader>
       <CardContent>

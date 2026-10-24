@@ -17,16 +17,25 @@ Emlak danışmanının müşteriye WhatsApp'tan attığı tek link. Müşteri li
 | Şirket sahibi | Aynı panel, ofisin tüm danışmanlarını görür | Çalışır |
 | Medya | Fotoğraf ve 360° kareler URL ile girilir | Dosya yükleme sonraki adım |
 
-## Kurulum
+## Kurulum (bir kez)
+
+Gerekenler: Node 20+, Docker Desktop (yerel PostgreSQL için), git.
 
 ```bash
-cp .env.example .env        # AUTH_SECRET üret: openssl rand -base64 32
+git clone https://github.com/Emircan42-hash/portfoy-odasi.git
+cd portfoy-odasi
+cp .env.example .env        # Windows PowerShell: copy .env.example .env
 docker compose up -d        # yerel PostgreSQL
 npm install                 # postinstall: prisma generate
-npm run db:migrate          # ilk migration'ı oluşturur ve uygular
-npm run db:seed             # demo ofis, kullanıcılar, 3 daire, 1 oda
-npm run dev
+npm run setup               # migration'ları uygular + demo verisini yükler
+npm run dev                 # http://localhost:3000
 ```
+
+## Geliştirme akışı
+
+Claude Code oturumunu **bu klasörde, kendi bilgisayarında** çalıştır (Claude Desktop'ta klasörü aç ya da terminalde `claude remote-control`). Dosyalar doğrudan diskinde değişir, `npm run dev` açıkken localhost anında yenilenir; git'ten indirme-push döngüsü gerekmez. Git yalnız yedek ve paylaşım içindir.
+
+Şema değiştiğinde: `npm run db:migrate` (migration üretir ve uygular, ardından client'ı yeniler).
 
 Demo girişleri (şifre `demo1234`):
 

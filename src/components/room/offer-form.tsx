@@ -40,9 +40,9 @@ export function OfferForm({ token, propertyId, listingType, alreadyOffered }: Pr
 
   if (state === "done" && !again) {
     return (
-      <Card>
+      <Card className="border-success/30 bg-success/5">
         <CardContent className="flex flex-wrap items-center gap-2 text-sm">
-          <HandCoins className="size-4 text-emerald-600" />
+          <HandCoins className="size-4 text-success" />
           <span>Teklifiniz danışmanınıza iletildi; mülk sahibiyle görüşüp size dönecek.</span>
           <Button type="button" variant="link" size="sm" className="ml-auto" onClick={() => setAgain(true)}>
             Yeni teklif ver
@@ -53,9 +53,9 @@ export function OfferForm({ token, propertyId, listingType, alreadyOffered }: Pr
   }
 
   return (
-    <Card>
+    <Card className="border-primary/25 bg-accent/40">
       <CardHeader>
-        <CardTitle>Teklif vermek ister misiniz?</CardTitle>
+        <CardTitle className="font-display text-xl">Teklif vermek ister misiniz?</CardTitle>
         <CardDescription>
           {listingType === "RENT" ? "Aylık kira için düşündüğünüz rakamı yazın." : "Düşündüğünüz satış rakamını yazın."} Teklifiniz yalnız
           danışmanınıza gider.
@@ -65,11 +65,11 @@ export function OfferForm({ token, propertyId, listingType, alreadyOffered }: Pr
         <form onSubmit={onSubmit} className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="amount">{listingType === "RENT" ? "Aylık kira teklifiniz (TL)" : "Teklifiniz (TL)"}</Label>
-            <Input id="amount" name="amount" inputMode="numeric" placeholder={listingType === "RENT" ? "38000" : "7500000"} required />
+            <Input id="amount" name="amount" inputMode="numeric" placeholder={listingType === "RENT" ? "38000" : "7500000"} required className="bg-card text-lg tabular" />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="offer-note">Not (isteğe bağlı)</Label>
-            <Textarea id="offer-note" name="note" placeholder="1 Kasım'da taşınabilirim, 1 yıllık sözleşme" className="min-h-14" />
+            <Textarea id="offer-note" name="note" placeholder="1 Kasım'da taşınabilirim, 1 yıllık sözleşme" className="min-h-14 bg-card" />
           </div>
           {state === "error" && <p className="text-sm text-destructive">Gönderilemedi, tekrar deneyin.</p>}
           <Button type="submit" disabled={state === "sending"} className="self-start">

@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { Building2, CalendarClock, DoorOpen, Eye, HandCoins, type LucideIcon } from "lucide-react";
 import { requireUser } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { propertyScope, roomScope } from "@/lib/scope";
 import { daysAgo, formatDateTime } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/panel/page-header";
+
+type Stat = { label: string; value: number; href: string; icon: LucideIcon; highlight?: boolean };
 
 export default async function DashboardPage() {
   const user = await requireUser();
@@ -24,39 +28,45 @@ export default async function DashboardPage() {
     }),
   ]);
 
-  const stats = [
-    { label: "Portföy", value: properties, href: "/portfoy" },
-    { label: "Müşteri odası", value: rooms, href: "/odalar" },
-    { label: "Bu hafta açılan link", value: opensThisWeek, href: "/odalar" },
-    { label: "Bekleyen teklif", value: pendingOffers, href: "/teklifler" },
-    { label: "Bekleyen randevu", value: appointments, href: "/randevular" },
+  const stats: Stat[] = [
+    { label: "Portföy", value: properties, href: "/portfoy", icon: Building2 },
+    { label: "Müşteri odası", value: rooms, href: "/odalar", icon: DoorOpen },
+    { label: "Bu hafta açılan link", value: opensThisWeek, href: "/odalar", icon: Eye },
+    { label: "Bekleyen teklif", value: pendingOffers, href: "/teklifler", icon: HandCoins, highlight: pendingOffers > 0 },
+    { label: "Bekleyen randevu", value: appointments, href: "/randevular", icon: CalendarClock, highlight: appointments > 0 },
   ];
 
   const kindLabel = { ROOM_OPEN: "linki açtı", PROPERTY_VIEW: "daireye baktı", TOUR_VIEW: "turu açtı" } as const;
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Özet</h1>
+    <div className="flex flex-col gap-8">
+      <PageHeader title="Özet" description={`${user.name}, müşterilerinin odalarda ne yaptığı burada.`}>
         <Button asChild>
           <Link href="/odalar/yeni">Yeni oda linki</Link>
         </Button>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        {stats.map((s) => (
-          <Link key={s.label} href={s.href}>
-            <Card>
-              <CardHeader>
-                <CardDescription>{s.label}</CardDescription>
-                <CardTitle className="text-3xl">{s.value}</CardTitle>
+      </PageHeader>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {stats.map(({ label, value, href, icon: Icon, highlight }) => (
+          <Link key={label} href={href} className="group">
+            <Card className="h-full gap-3 py-4 transition-shadow group-hover:shadow-card">
+              <CardHeader className="flex-row items-center justify-between">
+                <CardDescription>{label}</CardDescription>
+                <span className={`flex size-8 items-center justify-center rounded-full ${highlight ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"}`}>
+                  <Icon className="size-4" />
+                </span>
               </CardHeader>
+              <CardContent>
+                <div className="font-display text-4xl font-semibold tabular">{value}</div>
+              </CardContent>
             </Card>
           </Link>
         ))}
       </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>Son hareketler</CardTitle>
+          <CardTitle className="font-display text-xl">Son hareketler</CardTitle>
           <CardDescription>Müşterilerin odalarda yaptıkları, en yeni üstte.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -65,13 +75,13 @@ export default async function DashboardPage() {
           ) : (
             <ul className="flex flex-col divide-y text-sm">
               {recentEvents.map((e) => (
-                <li key={e.id} className="flex flex-wrap items-center gap-x-2 py-2">
+                <li key={e.id} className="flex flex-wrap items-center gap-x-2 py-2.5">
                   <Link href={`/odalar/${e.room.id}`} className="font-medium hover:underline">
                     {e.room.customerName}
                   </Link>
                   <span>{kindLabel[e.kind as keyof typeof kindLabel]}</span>
                   {e.property && <span className="text-muted-foreground">· {e.property.title}</span>}
-                  <span className="ml-auto text-muted-foreground">{formatDateTime(e.createdAt)}</span>
+                  <span className="ml-auto text-muted-foreground tabular">{formatDateTime(e.createdAt)}</span>
                 </li>
               ))}
             </ul>

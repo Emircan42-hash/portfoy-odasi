@@ -5,6 +5,7 @@ import { roomScope } from "@/lib/scope";
 import { formatDateTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/panel/page-header";
 
 export default async function RoomsPage() {
   const user = await requireUser();
@@ -19,19 +20,18 @@ export default async function RoomsPage() {
   });
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Müşteri odaları</h1>
+    <div className="flex flex-col gap-8">
+      <PageHeader title="Müşteri odaları" description="Her müşteriye bir link. Açılış, tepki, teklif ve randevu burada toplanır.">
         <Button asChild>
           <Link href="/odalar/yeni">Yeni oda linki</Link>
         </Button>
-      </div>
+      </PageHeader>
       {rooms.length === 0 ? (
         <p className="text-sm text-muted-foreground">Henüz oda yok. İlk linki oluşturun.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border">
+        <div className="overflow-x-auto rounded-2xl border bg-card shadow-card">
           <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-left">
+            <thead className="bg-muted/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="p-3 font-medium">Müşteri</th>
                 {user.role === "OWNER" && <th className="p-3 font-medium">Danışman</th>}
