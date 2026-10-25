@@ -68,7 +68,31 @@ model User {
   office       Office     @relation(fields: [officeId], references: [id])
   properties   Property[]
   rooms        Room[]
+  notifications Notification[]
   createdAt    DateTime   @default(now())
+}
+
+enum NotificationKind {
+  OFFER       // müşteri teklif verdi
+  APPOINTMENT // müşteri randevu istedi
+  NOTE        // müşteri not bıraktı
+  ROOM_OPEN   // müşteri linki ilk kez açtı
+}
+
+// Danışmana panel içi bildirim; NOTIFY_WEBHOOK_URL varsa aynı anda dışarı da iletilir (SMS/WhatsApp sağlayıcısı).
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      NotificationKind
+  title     String
+  body      String?
+  href      String? // panelde ilgili sayfa
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
 }
 
 model Property {

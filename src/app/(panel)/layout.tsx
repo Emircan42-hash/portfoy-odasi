@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { requireUser } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { logout } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/brand";
@@ -18,6 +19,7 @@ function initials(name: string) {
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
   const roleLabel = user.role === "OWNER" ? "Şirket sahibi" : "Danışman";
+  const unread = await prisma.notification.count({ where: { userId: user.id, readAt: null } });
 
   return (
     <div className="flex min-h-screen flex-1">
@@ -26,7 +28,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
           <Wordmark inverted />
         </Link>
         <nav className="mt-8 flex flex-col gap-1">
-          <NavLinks />
+          <NavLinks unread={unread} />
         </nav>
         <div className="mt-auto flex flex-col gap-3">
           <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
@@ -64,7 +66,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
             </form>
           </div>
           <nav className="-mx-1 flex gap-1 overflow-x-auto pb-1">
-            <NavLinks compact />
+            <NavLinks compact unread={unread} />
           </nav>
         </header>
         <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-8 lg:p-10">{children}</main>

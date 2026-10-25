@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { notify } from "@/lib/notify";
 
 const schema = z.object({
   kind: z.enum(["ROOM_OPEN", "PROPERTY_VIEW", "PHOTO_VIEW", "TOUR_VIEW", "SCENE_VIEW"]),
@@ -18,13 +19,27 @@ export async function POST(request: Request, { params }: Params) {
 
   const room = await prisma.room.findUnique({
     where: { token },
-    select: { id: true, items: { select: { propertyId: true } } },
+    select: { id: true, agentId: true, customerName: true, items: { select: { propertyId: true } } },
   });
   if (!room) return Response.json({ error: "not_found" }, { status: 404 });
 
   const { propertyId, sceneId, photoId, ...rest } = body.data;
   if (propertyId && !room.items.some((i) => i.propertyId === propertyId)) {
     return Response.json({ error: "not_in_room" }, { status: 400 });
+  }
+
+  // Linkin ilk açılışı danışman için haberdir; sonrakiler sadece panelde sayılır
+  if (rest.kind === "ROOM_OPEN") {
+    const opened = await prisma.roomEvent.count({ where: { roomId: room.id, kind: "ROOM_OPEN" } });
+    if (opened === 0) {
+      await notify({
+        userId: room.agentId,
+        kind: "ROOM_OPEN",
+        title: `${room.customerName} linki açtı`,
+        body: `${room.items.length} daire gösteriliyor`,
+        href: `/odalar/${room.id}`,
+      });
+    }
   }
 
   await prisma.roomEvent.create({
