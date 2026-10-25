@@ -7,7 +7,8 @@ services:
       POSTGRES_PASSWORD: portfoy
       POSTGRES_DB: portfoy
     ports:
-      - "5432:5432"
+      # 5432 doluysa .env'de DB_PORT=5434 gibi bir deger ver; DATABASE_URL'yi de ayni porta cek
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
