@@ -37,6 +37,8 @@ Claude Code oturumunu **bu klasörde, kendi bilgisayarında** çalıştır (Clau
 
 Şema değiştiğinde: `npm run db:migrate` (migration üretir ve uygular, ardından client'ı yeniler).
 
+5432 ya da 3000 başka bir projede doluysa: `.env`'e `DB_PORT=5434` ekle ve `DATABASE_URL`'deki portu 5434 yap; siteyi `npm run dev -- -p 3100` ile aç, `NEXT_PUBLIC_APP_URL`'yi `http://localhost:3100` yap. (Bu makinede böyle kurulu.)
+
 Demo girişleri (şifre `demo1234`):
 
 - `sahip@demo.local` — şirket sahibi
