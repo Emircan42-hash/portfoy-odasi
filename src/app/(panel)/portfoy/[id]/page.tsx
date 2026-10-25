@@ -71,13 +71,20 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <CardTitle className="font-display text-xl">360° tur</CardTitle>
-              <CardDescription>Her oda için bir kare. İlk kare turun başladığı odadır; kapı noktaları bir sonraki adımda panelden yerleştirilecek.</CardDescription>
+              <CardDescription>Her oda için bir kare. İlk kare turun başladığı odadır; kareler yüklenince kapıları yerleştirin.</CardDescription>
             </div>
-            {p.scenes.length > 0 && (
-              <Badge variant="outline">
-                <Rotate3d className="size-3" /> {p.scenes.length} oda
-              </Badge>
-            )}
+            <div className="flex items-center gap-2">
+              {p.scenes.length > 0 && (
+                <Badge variant="outline">
+                  <Rotate3d className="size-3" /> {p.scenes.length} oda · {p.scenes.reduce((n, s) => n + (Array.isArray(s.links) ? s.links.length : 0), 0)} kapı
+                </Badge>
+              )}
+              {p.scenes.length >= 2 && (
+                <Button asChild size="sm">
+                  <Link href={`/portfoy/${p.id}/tur`}>Kapıları yerleştir</Link>
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent>

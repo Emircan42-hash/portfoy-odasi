@@ -127,3 +127,18 @@
   background: oklch(0.21 0.03 235 / 85%) !important;
   backdrop-filter: blur(8px);
 }
+
+/* Kapı noktası aracındaki işaretçiler */
+.door-marker {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font: 600 13px/1 var(--font-geist-sans), sans-serif;
+  white-space: nowrap;
+  box-shadow: 0 2px 12px oklch(0 0 0 / 35%);
+  cursor: pointer;
+}
+.door-marker:hover {
+  background: var(--destructive);
+}
