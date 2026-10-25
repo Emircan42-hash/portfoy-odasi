@@ -134,7 +134,10 @@
   border-radius: 999px;
   background: var(--primary);
   color: var(--primary-foreground);
-  font: 600 13px/1 var(--font-geist-sans), sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
   white-space: nowrap;
   box-shadow: 0 2px 12px oklch(0 0 0 / 35%);
   cursor: pointer;
