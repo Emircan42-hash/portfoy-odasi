@@ -16,7 +16,7 @@ type PropertyOption = {
   district: string;
 };
 
-export function RoomForm({ properties }: { properties: PropertyOption[] }) {
+export function RoomForm({ properties, preselect }: { properties: PropertyOption[]; preselect?: string }) {
   const [state, action, pending] = useActionState<RoomFormState, FormData>(createRoom, {});
 
   return (
@@ -40,7 +40,7 @@ export function RoomForm({ properties }: { properties: PropertyOption[] }) {
         {properties.length === 0 && <p className="text-sm text-muted-foreground">Önce portföye daire ekleyin.</p>}
         {properties.map((p) => (
           <label key={p.id} className="flex cursor-pointer items-center gap-3 rounded-md border p-3 text-sm hover:bg-accent">
-            <input type="checkbox" name="propertyIds" value={p.id} className="size-4" />
+            <input type="checkbox" name="propertyIds" value={p.id} defaultChecked={p.id === preselect} className="size-4" />
             <span className="flex-1">
               <span className="font-medium">{p.title}</span>
               <span className="block text-muted-foreground">

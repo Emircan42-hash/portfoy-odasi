@@ -70,16 +70,11 @@ export function PropertyForm() {
       <Field label="Açıklama">
         <Textarea name="description" placeholder="Site içinde, kapalı otopark, salon denize bakar…" />
       </Field>
-      <Field label="Fotoğraf URL'leri (her satıra bir tane)">
-        <Textarea name="photoUrls" placeholder={"https://.../salon.jpg\nhttps://.../mutfak.jpg"} className="font-mono text-xs" />
-      </Field>
-      <Field label="360° kareler (her satır: Oda adı | panorama URL)">
-        <Textarea name="sceneLines" placeholder={"Salon | https://.../salon-360.jpg\nMutfak | https://.../mutfak-360.jpg"} className="font-mono text-xs" />
-      </Field>
       {state.error && <p className="text-sm text-destructive">{state.error}</p>}
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-xs text-muted-foreground">Fotoğraflar ve 360° kareler kaydettikten sonra daire sayfasından yüklenir.</p>
         <Button type="submit" disabled={pending}>
-          {pending ? "Kaydediliyor…" : "Kaydet"}
+          {pending ? "Kaydediliyor…" : "Kaydet ve fotoğraf yükle"}
         </Button>
       </div>
     </form>

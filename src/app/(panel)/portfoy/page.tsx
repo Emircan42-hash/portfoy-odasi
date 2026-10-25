@@ -34,10 +34,13 @@ export default async function PropertiesPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {properties.map((p) => (
-            <Card key={p.id} className="overflow-hidden py-0">
+            <Link key={p.id} href={`/portfoy/${p.id}`} className="group">
+            <Card className="h-full overflow-hidden py-0 transition-shadow group-hover:shadow-float">
               <div className="relative aspect-[3/2] bg-muted">
-                {p.photos[0] && (
+                {p.photos[0] ? (
                   <Image src={p.photos[0].url} alt={p.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-sm text-muted-foreground">Fotoğraf yok · tıklayıp yükleyin</div>
                 )}
                 <div className="absolute left-3 top-3 flex gap-2">
                   <Badge variant="glass">{p.listingType === "RENT" ? "Kiralık" : "Satılık"}</Badge>
@@ -57,6 +60,7 @@ export default async function PropertiesPage() {
                 </div>
               </CardContent>
             </Card>
+            </Link>
           ))}
         </div>
       )}

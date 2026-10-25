@@ -1,0 +1,5 @@
+# Depoda satır sonları LF; Windows'ta CRLF uyarılarını ve karışık dosyaları önler
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary

@@ -25,8 +25,6 @@ const schema = z.object({
   neighborhood: z.string().optional(),
   address: z.string().optional(),
   description: z.string().optional(),
-  photoUrls: z.string().optional(),
-  sceneLines: z.string().optional(),
 });
 
 export type PropertyFormState = { error?: string };
@@ -39,24 +37,7 @@ export async function createProperty(_prev: PropertyFormState, formData: FormDat
   }
   const d = parsed.data;
 
-  const photos = (d.photoUrls ?? "")
-    .split("\n")
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((url, order) => ({ url, order }));
-
-  // Her satır: "Oda adı | https://.../panorama.jpg"
-  const scenes = (d.sceneLines ?? "")
-    .split("\n")
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((line, order) => {
-      const [name, panoramaUrl] = line.split("|").map((s) => s.trim());
-      return { name: name || `Oda ${order + 1}`, panoramaUrl: panoramaUrl ?? "", order };
-    })
-    .filter((s) => s.panoramaUrl.startsWith("http"));
-
-  await prisma.property.create({
+  const property = await prisma.property.create({
     data: {
       officeId: user.officeId,
       agentId: user.id,
@@ -74,10 +55,9 @@ export async function createProperty(_prev: PropertyFormState, formData: FormDat
       neighborhood: d.neighborhood || null,
       address: d.address || null,
       description: d.description || null,
-      photos: { create: photos },
-      scenes: { create: scenes },
     },
   });
 
-  redirect("/portfoy");
+  // Fotoğraf ve 360° kareler daire sayfasından yüklenir
+  redirect(`/portfoy/${property.id}`);
 }
